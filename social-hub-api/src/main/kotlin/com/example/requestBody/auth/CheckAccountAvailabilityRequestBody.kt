@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 
-data class CheckAccountAvailibilityRequestBody(
+data class CheckAccountAvailabilityRequestBody(
     val email: String? = null,
     val username: String? = null,
     val phoneNumber: String? = null

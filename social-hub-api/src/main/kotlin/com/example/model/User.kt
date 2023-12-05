@@ -24,10 +24,6 @@ object UserTable: Table() {
     val email = varchar("email", 50)
     val phoneNumber = varchar("phoneNumber", 20)
     val country = varchar("country", 50)
-    val street = varchar("street", 50).nullable()
-    val houseNumber = varchar("houseNumber", 10).nullable()
-    val postalCode = varchar("postalCode", 10).nullable()
-    val city = varchar("city", 50).nullable()
     val password = varchar("password", 100)
     override val primaryKey = PrimaryKey(username)
 }

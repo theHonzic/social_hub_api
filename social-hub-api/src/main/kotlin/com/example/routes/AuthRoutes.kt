@@ -3,7 +3,7 @@ package com.example.routes
 import com.example.dao.user.dao
 import com.example.exceptions.UserNotFoundException
 import com.example.model.User
-import com.example.requestBody.auth.CheckAccountAvailibilityRequestBody
+import com.example.requestBody.auth.CheckAccountAvailabilityRequestBody
 import com.example.requestBody.auth.LoginRequestBody
 import com.example.requestBody.auth.RegistrationRequestBody
 import com.example.security.TokenManager
@@ -69,13 +69,13 @@ fun Route.authRouting() {
 
         // Check account is available
         post("/check_available") {
-            val body = call.receive<CheckAccountAvailibilityRequestBody>()
+            val body = call.receive<CheckAccountAvailabilityRequestBody>()
 
-            val used = listOf<User?>(
+            val used = listOfNotNull(
                 body.username?.let { it1 -> dao.getUser(it1) },
                 body.email?.let { it1 -> dao.getUserByEmail(it1) },
                 body.phoneNumber?.let { it1 -> dao.getUserByPhoneNumber(it1) }
-            ).filterNotNull().isNotEmpty()
+            ).isNotEmpty()
             if (used) {
                 call.respondText("Account is not available", status = HttpStatusCode.Conflict)
             } else {
