@@ -63,7 +63,7 @@ class DaoFacadeImpl: IDaoFacade {
         username: String,
         firstName: String,
         lastName: String,
-        gender: String,
+        gender: Int,
         email: String,
         phoneNumber: String,
         country: String,

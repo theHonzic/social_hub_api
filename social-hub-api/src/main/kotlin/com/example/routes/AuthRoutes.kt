@@ -28,14 +28,7 @@ fun Route.authRouting() {
                 dao.getUserByUserName(requestBody.login)
             user?.let {
                 if (dao.checkCredentials(it.username, requestBody.password)) {
-                    tokenManager.parseJWT(tokenManager.generateToken(it.username))
-                        .onSuccess {
-                            Logger.log("User ${it.username} logged in!", Logger.MessageKind.LOGGED)
-                        }
-                        .onFailure {
-                            Logger.log("ERROR", Logger.MessageKind.ERROR)
-                        }
-                    call.respond(hashMapOf("Token" to tokenManager.generateToken(it.username)))
+                    call.respond(hashMapOf("token" to tokenManager.generateToken(it.username)))
                 } else {
                     throw AuthenticationException("Invalid username or password!")
                 }
@@ -67,14 +60,7 @@ fun Route.authRouting() {
                     body.password
                 )?.let {
                     // User created
-                    tokenManager.parseJWT(tokenManager.generateToken(it.username))
-                        .onSuccess {
-                            Logger.log("User ${it.username} logged in!", Logger.MessageKind.LOGGED)
-                        }
-                        .onFailure {
-                            Logger.log("ERROR", Logger.MessageKind.ERROR)
-                        }
-                    call.respond(hashMapOf("Token" to tokenManager.generateToken(it.username)))
+                    call.respond(hashMapOf("token" to tokenManager.generateToken(it.username)))
                 } ?: throw AuthenticationException("User could not be created!")
             }
         }

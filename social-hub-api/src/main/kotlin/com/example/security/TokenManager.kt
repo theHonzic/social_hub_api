@@ -52,7 +52,7 @@ class TokenManager {
 
 fun Application.configureSecurity() {
     install(Authentication) {
-        jwt {
+        jwt("auth-jwt") {
             val config = HoconApplicationConfig(ConfigFactory.load())
             realm = config.property("ktor.security.jwt.realm").getString()
 

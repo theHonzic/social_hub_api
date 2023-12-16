@@ -13,6 +13,6 @@ fun Application.configureRouting() {
             call.respondText("Hello World!")
         }
         authRouting()
-        authenticate { userRouting() }
+        authenticate("auth-jwt") { userRouting() }
     }
 }

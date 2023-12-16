@@ -1,16 +1,15 @@
-package com.example.requestBody.auth
+package com.example.responseBody
 
-import com.example.requestBody.RequestBody
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RegistrationRequestBody(
+data class GetMyAccountResponseBody(
     val username: String,
+    val email: String,
     val firstName: String,
     val lastName: String,
     val gender: Int,
-    val email: String,
     val phoneNumber: String,
     val country: String,
-    val password: String
-): RequestBody
+    val profilePicture: String? = null
+)
