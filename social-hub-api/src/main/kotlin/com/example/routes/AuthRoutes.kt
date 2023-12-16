@@ -22,13 +22,10 @@ fun Route.authRouting() {
         // Login
         post("/login") {
             val requestBody = call.receive<LoginRequestBody>()
-            var user: User? = null
-            if (requestBody.login != null) {
-                user = if (requestBody.login.contains("@"))
-                    dao.getUserByEmail(requestBody.login)
-                else
-                    dao.getUserByUserName(requestBody.login)
-            }
+            val user: User? = if (requestBody.login.contains("@"))
+                dao.getUserByEmail(requestBody.login)
+            else
+                dao.getUserByUserName(requestBody.login)
             user?.let {
                 if (dao.checkCredentials(it.username, requestBody.password)) {
                     tokenManager.parseJWT(tokenManager.generateToken(it.username))
@@ -49,9 +46,16 @@ fun Route.authRouting() {
         post("/register") {
             val body = call.receive<RegistrationRequestBody>()
 
-            dao.getUserByUserName(body.username)?.let {
-                throw AuthenticationException("Username already taken!")
-            } ?: run {
+            val used = listOfNotNull(
+                body.username.let { it1 -> dao.getUser(it1) },
+                body.email.let { it1 -> dao.getUserByEmail(it1) },
+                body.phoneNumber.let { it1 -> dao.getUserByPhoneNumber(it1) }
+            ).isNotEmpty()
+
+            if (used) {
+                Logger.log("Account already exists", Logger.MessageKind.ERROR)
+                call.respondText("Account already exists", status = HttpStatusCode.Conflict)
+            } else {
                 dao.addUser(
                     body.username,
                     body.firstName,
@@ -62,7 +66,15 @@ fun Route.authRouting() {
                     body.country,
                     body.password
                 )?.let {
-                    call.respondText("User created", status = HttpStatusCode.Created)
+                    // User created
+                    tokenManager.parseJWT(tokenManager.generateToken(it.username))
+                        .onSuccess {
+                            Logger.log("User ${it.username} logged in!", Logger.MessageKind.LOGGED)
+                        }
+                        .onFailure {
+                            Logger.log("ERROR", Logger.MessageKind.ERROR)
+                        }
+                    call.respond(hashMapOf("Token" to tokenManager.generateToken(it.username)))
                 } ?: throw AuthenticationException("User could not be created!")
             }
         }
